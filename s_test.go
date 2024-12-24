@@ -940,3 +940,57 @@ func TestGetGroup(t *testing.T) {
 		})
 	}
 }
+
+func TestPadding(t *testing.T) {
+	tests := []struct {
+		name     string
+		fn       func(string, string, int) string
+		s        string
+		padStr   string
+		length   int
+		expected string
+	}{
+		// LeftPad tests
+		{"LeftPad_SingleSpace", LeftPad, "abc", " ", 5, "  abc"},
+		{"LeftPad_MultiChar", LeftPad, "abc", "XY", 10, "XYXYXYXabc"},
+		{"LeftPad_NoChange", LeftPad, "abc", " ", 3, "abc"},
+		{"LeftPad_EmptyPad", LeftPad, "abc", "", 5, "abc"},
+		{"LeftPad_EmptyString", LeftPad, "", "X", 3, "XXX"},
+		{"LeftPad_ShorterLength", LeftPad, "abc", "X", 2, "abc"},
+
+		// RightPad tests
+		{"RightPad_SingleSpace", RightPad, "abc", " ", 5, "abc  "},
+		{"RightPad_MultiChar", RightPad, "abc", "XY", 10, "abcXYXYXYX"},
+		{"RightPad_NoChange", RightPad, "abc", " ", 3, "abc"},
+		{"RightPad_EmptyPad", RightPad, "abc", "", 5, "abc"},
+		{"RightPad_EmptyString", RightPad, "", "X", 3, "XXX"},
+		{"RightPad_ShorterLength", RightPad, "abc", "X", 2, "abc"},
+
+		// Pad tests
+		{"Pad_SingleSpace", Pad, "abc", " ", 7, "  abc  "},
+		{"Pad_SingleSpace", Pad, "abc", " ", 8, "   abc  "},
+		{"Pad_MultiChar", Pad, "abc", "XY", 10, "XYXYabcXYX"},
+		{"Pad_NoChange", Pad, "abc", " ", 3, "abc"},
+		{"Pad_EmptyPad", Pad, "abc", "", 5, "abc"},
+		{"Pad_EmptyString", Pad, "", "X", 4, "XXXX"},
+		{"Pad_ShorterLength", Pad, "abc", "X", 2, "abc"},
+		{"Pad_OddPadding", Pad, "abc", "X", 6, "XXabcX"},
+		{"Pad_Unicode1", Pad, "abc", "世界", 7, "世界abc世界"},
+		{"Pad_Unicode2", Pad, "abc", "世界", 8, "世界世abc世界"},
+		{"Pad_Unicode3", Pad, "abc", "世界", 9, "世界世界abc世界"},
+		{"Pad_Unicode4", Pad, "abc", "世界", 10, "世界世界abc世界世"},
+		{"Pad_Unicode5", Pad, "abc", "世界", 11, "世界世界abc世界世界"},
+		{"Pad_Unicode6", Pad, "abc", "世界", 12, "世界世界世abc世界世界"},
+		{"Pad_Unicode7", Pad, "abc", "世界", 13, "世界世界世界abc世界世界"},
+		{"Pad_Unicode8", Pad, "abc", "世界", 14, "世界世界世界abc世界世界世"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.fn(tt.s, tt.padStr, tt.length)
+			if got != tt.expected {
+				t.Errorf("got %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}

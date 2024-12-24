@@ -382,3 +382,77 @@ func GetGroup(s, pattern, group string) string {
 
 	return ""
 }
+
+// Repeat returns s repeated count times (concatenated).
+// e.g. Repeat("XY", 3) => "XYXYXY".
+func Repeat(s string, count int) string {
+	if count <= 0 {
+		return ""
+	}
+
+	var builder strings.Builder
+	builder.Grow(len(s) * count)
+
+	for i := 0; i < count; i++ {
+		builder.WriteString(s)
+	}
+
+	return builder.String()
+}
+
+// LeftPad: repeat padStr on the left. If final exceeds length, trim from the right.
+func LeftPad(s string, padStr string, length int) string {
+	runes := []rune(s)
+	if len(runes) >= length || padStr == "" {
+		return s
+	}
+	needed := length - len(runes)
+	prepend := Repeat(padStr, needed)
+	// Grab "needed" runes from the beginning of prepend
+	result := []rune(prepend)[:needed]
+	result = append(result, runes...)
+	return string(result)
+}
+
+// RightPad: repeat padStr on the right.
+func RightPad(s string, padStr string, length int) string {
+	runes := []rune(s)
+	if len(runes) >= length || padStr == "" {
+		return s
+	}
+	needed := length - len(runes)
+	appendStr := Repeat(padStr, needed)
+	// Grab "needed" runes from the end of appendStr
+	result := append(runes, []rune(appendStr)[:needed]...)
+	return string(result)
+}
+
+// Pad: two-sided padding in a stepwise manner (left first, then right, then left, etc.).
+func Pad(s string, padStr string, length int) string {
+	runes := []rune(s)
+	s_len := len(runes)
+	if len(runes) >= length || padStr == "" {
+		return s
+	}
+	pad_len := len([]rune(padStr))
+	left_len := 0
+	right_len := 0
+	is_left := true
+	for left_len+s_len+right_len < length {
+		if is_left {
+			left_len += pad_len
+			for left_len+s_len+right_len > length {
+				left_len--
+			}
+		} else {
+			right_len += pad_len
+			for left_len+s_len+right_len > length {
+				right_len--
+			}
+		}
+		is_left = !is_left
+	}
+
+	left := LeftPad(s, padStr, left_len+s_len)
+	return RightPad(left, padStr, left_len+s_len+right_len)
+}
