@@ -477,3 +477,36 @@ func Dedupe(s string) string {
 
 	return string(result)
 }
+func ToWindowsPathSeparator(path string) string {
+	// Handle empty path
+	if path == "" {
+		return path
+	}
+	path = Trim(path)
+
+	is_unc := false
+	// Preserve network share path starting with \\
+	if len(path) >= 2 && path[0] == '\\' && path[1] == '\\' {
+		path = strings.TrimLeft(path[2:], "\\/")
+		is_unc = true
+	}
+
+	// Replace all remaining contiguous separators with single backslash
+	re := regexp.MustCompile(`[\\/]{2,}`)
+	path = strings.ReplaceAll(re.ReplaceAllString(path, "\\"), "/", "\\")
+	if is_unc {
+		path = `\\` + path
+	}
+	return path
+}
+
+func ToLinuxPathSeparator(path string) string {
+	// Handle empty path
+	if path == "" {
+		return path
+	}
+
+	// Replace all contiguous separators with single forward slash
+	re := regexp.MustCompile(`[\\/]{2,}`)
+	return strings.ReplaceAll(re.ReplaceAllString(path, "/"), "\\", "/")
+}

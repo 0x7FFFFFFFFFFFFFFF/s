@@ -1030,3 +1030,54 @@ func TestDedupe(t *testing.T) {
 		})
 	}
 }
+
+func TestToLinuxPathSeparator(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		expected string
+	}{
+		{"ToLinuxPathSeparator_Empty", "", ""},
+		{"ToLinuxPathSeparator_NoChange", "abc", "abc"},
+		{"ToLinuxPathSeparator_Backslash", `/a\\b\c`, `/a/b/c`},
+		{"ToLinuxPathSeparator_Mixed", `/a\\b/\\c\`, `/a/b/c/`},
+		{"ToLinuxPathSeparator_Multiple", `a\\\\\\b\\\\c`, `a/b/c`},
+		{"ToLinuxPathSeparator_Unicode", `/你\\好\\世界`, `/你/好/世界`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ToLinuxPathSeparator(tt.s)
+			if got != tt.expected {
+				t.Errorf("got %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestToWindowsPathSeparator(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		expected string
+	}{
+		{"ToWindowsPathSeparator_Empty", "", ""},
+		{"ToWindowsPathSeparator_NoChange", "abc", "abc"},
+		{"ToWindowsPathSeparator_ForwardSlash", `c:/a/b/c`, `c:\a\b\c`},
+		{"ToWindowsPathSeparator_Mixed", `c:\\/a/b/\c/`, `c:\a\b\c\`},
+		{"ToWindowsPathSeparator_Multiple", `\\a/b/c`, `\\a\b\c`},
+		{"ToWindowsPathSeparator_Unicode", `\\/你/好/世界`, `\\你\好\世界`},
+		{"ToWindowsPathSeparator_Unicode2", `\\你/好/世界`, `\\你\好\世界`},
+		{"ToWindowsPathSeparator_Unicode3", `\\//\\/你/好/世界`, `\\你\好\世界`},
+		{"ToWindowsPathSeparator_Unicode4", `/\\//\\/你/好/世界`, `\你\好\世界`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ToWindowsPathSeparator(tt.s)
+			if got != tt.expected {
+				t.Errorf("got %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}
