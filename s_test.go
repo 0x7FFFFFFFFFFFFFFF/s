@@ -1000,3 +1000,33 @@ func TestPadding(t *testing.T) {
 		})
 	}
 }
+
+func TestDedupe(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		expected string
+	}{
+		{"Dedupe_Empty", "", ""},
+		{"Dedupe_Empty2", " ", " "},
+		{"Dedupe_Empty3", "  ", " "},
+		{"Dedupe_NoChange", "abc", "abc"},
+		{"Dedupe_SingleChar", "aaa", "a"},
+		{"Dedupe_MultiChar", "aabbcc", "abc"},
+		{"Dedupe_Unicode", "你好你好世界", "你好你好世界"},
+		{"Dedupe_Whitespace", "a  b  c", "a b c"},
+		{"Dedupe_Whitespace2", "a\t\tb\t\tc", "a\tb\tc"},
+		{"Dedupe_Newline", "a\n\nb\n\nc", "a\nb\nc"},
+		{"Dedupe_Newline2", "a\r\rb\n\nc", "a\rb\nc"},
+		{"Dedupe_Newline3", "a\r\n\r\nb\n\nc", "a\r\n\r\nb\nc"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Dedupe(tt.s)
+			if got != tt.expected {
+				t.Errorf("got %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}

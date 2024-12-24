@@ -456,3 +456,24 @@ func Pad(s string, padStr string, length int) string {
 	left := LeftPad(s, padStr, left_len+s_len)
 	return RightPad(left, padStr, left_len+s_len+right_len)
 }
+
+func Dedupe(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+
+	runes := []rune(s)
+	result := make([]rune, 0, len(runes))
+
+	// Add first character
+	result = append(result, runes[0])
+
+	// Compare each character with previous one
+	for i := 1; i < len(runes); i++ {
+		if runes[i] != runes[i-1] {
+			result = append(result, runes[i])
+		}
+	}
+
+	return string(result)
+}
