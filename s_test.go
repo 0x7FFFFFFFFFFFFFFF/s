@@ -807,3 +807,136 @@ func TestGrep(t *testing.T) {
 		})
 	}
 }
+func TestGetGroup(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       string
+		pattern string
+		group   string
+		want    string
+	}{
+		{
+			name:    "numbered group 0 (full match)",
+			s:       "hello world",
+			pattern: "hello (\\w+)",
+			group:   "0",
+			want:    "hello world",
+		},
+		{
+			name:    "numbered group 1",
+			s:       "hello world",
+			pattern: "hello (\\w+)",
+			group:   "1",
+			want:    "world",
+		},
+		{
+			name:    "numbered group out of range",
+			s:       "hello world",
+			pattern: "hello (\\w+)",
+			group:   "2",
+			want:    "",
+		},
+		{
+			name:    "named group",
+			s:       "hello world",
+			pattern: "hello (?P<word>\\w+)",
+			group:   "word",
+			want:    "world",
+		},
+		{
+			name:    "named group not found",
+			s:       "hello world",
+			pattern: "hello (?P<word>\\w+)",
+			group:   "notexist",
+			want:    "",
+		},
+		{
+			name:    "multiple groups numbered",
+			s:       "name: John, age: 30",
+			pattern: "name: (\\w+), age: (\\d+)",
+			group:   "1",
+			want:    "John",
+		},
+		{
+			name:    "multiple groups named",
+			s:       "name: John, age: 30",
+			pattern: "name: (?P<name>\\w+), age: (?P<age>\\d+)",
+			group:   "age",
+			want:    "30",
+		},
+		{
+			name:    "no match",
+			s:       "hello world",
+			pattern: "xyz",
+			group:   "0",
+			want:    "",
+		},
+		{
+			name:    "invalid regex",
+			s:       "hello world",
+			pattern: "[",
+			group:   "0",
+			want:    "",
+		},
+		{
+			name:    "invalid group number",
+			s:       "hello world",
+			pattern: "hello (\\w+)",
+			group:   "-1",
+			want:    "",
+		},
+		{
+			name:    "empty string",
+			s:       "",
+			pattern: "(\\w+)",
+			group:   "1",
+			want:    "",
+		},
+		{
+			name:    "unicode support",
+			s:       "你好世界",
+			pattern: "(世界)",
+			group:   "1",
+			want:    "世界",
+		},
+		{
+			name:    "email extraction",
+			s:       "Contact: test@example.com",
+			pattern: `.*?\s+([^@]+)@(?P<domain>[^.]+)`, // Changed to non-capturing group at start
+			group:   "1",                               // Changed to use numbered group instead
+			want:    "test",
+		},
+		// Alternative using named group
+		{
+			name:    "email extraction with named group",
+			s:       "Contact: test@example.com",
+			pattern: `.*\s+(?P<user>[^@]+)@[^.]+\.[^\\s]+`,
+			group:   "user",
+			want:    "test",
+		},
+		{
+			name:    "optional group present",
+			s:       "prefix-abc",
+			pattern: "prefix-(?P<opt>\\w+)?",
+			group:   "opt",
+			want:    "abc",
+		},
+		{
+			name:    "optional group absent",
+			s:       "prefix-",
+			pattern: "prefix-(?P<opt>\\w+)?",
+			group:   "opt",
+			want:    "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetGroup(tt.s, tt.pattern, tt.group)
+			if got != tt.want {
+				t.Errorf("GetGroup(%q, %q, %q) = %v; want %v",
+					tt.s, tt.pattern, tt.group, got, tt.want)
+			}
+		})
+	}
+}

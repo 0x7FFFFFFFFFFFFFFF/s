@@ -3,6 +3,7 @@ package s
 import (
 	"math"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -350,4 +351,34 @@ func Grep(s string, pattern string) []string {
 	}
 
 	return result
+}
+
+func GetGroup(s, pattern, group string) string {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return ""
+	}
+
+	match := re.FindStringSubmatch(s)
+	if match == nil {
+		return ""
+	}
+
+	// If group is a number
+	if groupNum, err := strconv.Atoi(group); err == nil {
+		if groupNum < 0 || groupNum >= len(match) {
+			return ""
+		}
+		return match[groupNum]
+	}
+
+	// If group is a name
+	names := re.SubexpNames()
+	for i, name := range names {
+		if name == group && i < len(match) {
+			return match[i]
+		}
+	}
+
+	return ""
 }
