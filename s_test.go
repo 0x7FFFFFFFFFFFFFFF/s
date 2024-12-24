@@ -983,6 +983,12 @@ func TestPadding(t *testing.T) {
 		{"Pad_Unicode6", Pad, "abc", "世界", 12, "世界世界世abc世界世界"},
 		{"Pad_Unicode7", Pad, "abc", "世界", 13, "世界世界世界abc世界世界"},
 		{"Pad_Unicode8", Pad, "abc", "世界", 14, "世界世界世界abc世界世界世"},
+
+		{"Pad_Center1", Pad, "hello", " ", 10, "   hello  "},
+		{"Pad_Center2", Pad, "  hello", " ", 10, "    hello "},
+		{"Pad_Center3", Pad, "hello", "ab", 10, "abahelloab"},
+		{"Pad_Center4", Pad, "тест", " ", 10, "   тест   "},
+		{"Pad_Center5", Pad, "こんにちは", " ", 10, "   こんにちは  "},
 	}
 
 	for _, tt := range tests {
