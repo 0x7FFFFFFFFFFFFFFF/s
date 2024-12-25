@@ -807,7 +807,7 @@ func TestGrep(t *testing.T) {
 		})
 	}
 }
-func TestGetGroup(t *testing.T) {
+func TestGetMatchedRegexGroup(t *testing.T) {
 	tests := []struct {
 		name    string
 		s       string
@@ -932,9 +932,9 @@ func TestGetGroup(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetGroup(tt.s, tt.pattern, tt.group)
+			got := GetMatchedRegexGroup(tt.s, tt.pattern, tt.group)
 			if got != tt.want {
-				t.Errorf("GetGroup(%q, %q, %q) = %v; want %v",
+				t.Errorf("GetMatchedRegexGroup(%q, %q, %q) = %v; want %v",
 					tt.s, tt.pattern, tt.group, got, tt.want)
 			}
 		})

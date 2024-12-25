@@ -372,7 +372,7 @@ func Grep(s string, pattern string) []string {
 	return result
 }
 
-func GetGroup(s, pattern, group string) string {
+func GetMatchedRegexGroup(s, pattern, group string) string {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
 		return ""
