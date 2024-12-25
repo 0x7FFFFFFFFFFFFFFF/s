@@ -351,6 +351,17 @@ func IsMatch(s string, regex string) bool {
 	return re.MatchString(s)
 }
 
+// Grep searches for all occurrences of the given pattern in the input string s
+// and returns a slice of strings containing all full matches.
+//
+// Parameters:
+//   - s: The input string to search within.
+//   - pattern: The regular expression pattern to search for.
+//
+// Returns:
+//
+//	A slice of strings containing all full matches of the pattern in the input string.
+//	If no matches are found or if the pattern is invalid, an empty slice is returned.
 func Grep(s string, pattern string) []string {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
