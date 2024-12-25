@@ -203,6 +203,16 @@ func Succ(s string) string {
 	return string(runes)
 }
 
+// Highlight highlights all occurrences of a pattern in a given string by surrounding them with specified left and right markers.
+//
+// Parameters:
+//   - s: The input string in which to search for the pattern.
+//   - pattern: The regular expression pattern to search for in the input string.
+//   - left: The string to insert to the left of each match.
+//   - right: The string to insert to the right of each match.
+//
+// Returns:
+//   A new string with all occurrences of the pattern surrounded by the left and right markers. If the pattern is not found or if there is an error compiling the pattern, the original string is returned.
 func Highlight(s string, pattern string, left string, right string) string {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
