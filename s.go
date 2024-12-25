@@ -497,6 +497,18 @@ func Dedupe(s string) string {
 	return string(result)
 }
 
+// ToWindowsPathSeparator converts a given file path to use Windows path separators.
+// It handles empty paths, trims leading and trailing whitespace, and preserves network share paths.
+//
+// Parameters:
+//   - path: The input file path as a string.
+//
+// Returns:
+//   - A string representing the file path with Windows path separators.
+//
+// Example:
+//
+//	ToWindowsPathSeparator("C:/my_projects/s/s.go") // Returns "C:\my_projects\s\s.go"
 func ToWindowsPathSeparator(path string) string {
 	// Handle empty path
 	if path == "" {
