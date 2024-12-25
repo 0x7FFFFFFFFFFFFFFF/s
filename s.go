@@ -383,6 +383,71 @@ func Grep(s string, pattern string) []string {
 	return result
 }
 
+// GrepGroup searches the input string `s` for all matches of the regular expression `pattern`
+// and returns a slice of strings containing the specified `group` from each match.
+//
+// Parameters:
+//   - s: The input string to search.
+//   - pattern: The regular expression pattern to match against the input string.
+//   - group: The name or index of the capturing group to extract from each match.
+//
+// Returns:
+//
+//	A slice of strings containing the specified group from each match. If the pattern does not
+//	compile, or if the group is not found, an empty slice is returned.
+//
+// Example:
+//
+//	matches := GrepGroup("example123test456", `(\d+)`, "1")
+//	// matches will contain ["123", "456"]
+func GrepGroup(s string, pattern string, group string) []string {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return []string{}
+	}
+
+	// Find all matches
+	matches := re.FindAllStringSubmatch(s, -1)
+	if matches == nil {
+		return []string{}
+	}
+
+	// Get group names if pattern has named groups
+	groupNames := re.SubexpNames()
+
+	// Determine group index
+	groupIdx := -1
+	if i, err := strconv.Atoi(group); err == nil {
+		// Numeric group
+		if i >= 0 && i < len(groupNames) {
+			groupIdx = i
+		}
+	} else {
+		// Named group
+		for i, name := range groupNames {
+			if name == group {
+				groupIdx = i
+				break
+			}
+		}
+	}
+
+	// Return empty if group not found
+	if groupIdx == -1 {
+		return []string{}
+	}
+
+	// Extract the specified group from each match
+	result := make([]string, 0, len(matches))
+	for _, match := range matches {
+		if groupIdx < len(match) {
+			result = append(result, match[groupIdx])
+		}
+	}
+
+	return result
+}
+
 func GetMatchedRegexGroup(s, pattern, group string) string {
 	re, err := regexp.Compile(pattern)
 	if err != nil {

@@ -1081,3 +1081,94 @@ func TestToWindowsPathSeparator(t *testing.T) {
 		})
 	}
 }
+
+func TestGrepGroup(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		pattern  string
+		group    string
+		expected []string
+	}{
+		{
+			name:     "simple group match",
+			s:        "hello world hello universe",
+			pattern:  "(hello)",
+			group:    "1",
+			expected: []string{"hello", "hello"},
+		},
+		{
+			name:     "named group match",
+			s:        "hello world hello universe",
+			pattern:  "(?P<word>hello)",
+			group:    "word",
+			expected: []string{"hello", "hello"},
+		},
+		{
+			name:     "multiple groups",
+			s:        "name: John, age: 30, name: Jane, age: 25",
+			pattern:  "name: (?P<name>\\w+), age: (?P<age>\\d+)",
+			group:    "name",
+			expected: []string{"John", "Jane"},
+		},
+		{
+			name:     "group not found",
+			s:        "hello world",
+			pattern:  "(hello)",
+			group:    "2",
+			expected: []string{},
+		},
+		{
+			name:     "invalid regex",
+			s:        "hello world",
+			pattern:  "[",
+			group:    "1",
+			expected: []string{},
+		},
+		{
+			name:     "unicode group match",
+			s:        "你好世界 你好宇宙",
+			pattern:  "(你好)",
+			group:    "1",
+			expected: []string{"你好", "你好"},
+		},
+		{
+			name:     "empty input",
+			s:        "",
+			pattern:  "(\\w+)",
+			group:    "1",
+			expected: []string{},
+		},
+		{
+			name:     "no matches",
+			s:        "hello world",
+			pattern:  "xyz",
+			group:    "1",
+			expected: []string{},
+		},
+		{
+			name:     "optional group present",
+			s:        "prefix-abc",
+			pattern:  "prefix-(?P<opt>\\w+)?",
+			group:    "opt",
+			expected: []string{"abc"},
+		},
+		{
+			name:     "optional group absent",
+			s:        "prefix-",
+			pattern:  "prefix-(?P<opt>\\w+)?",
+			group:    "opt",
+			expected: []string{""},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GrepGroup(tt.s, tt.pattern, tt.group)
+			if !reflect.DeepEqual(got, tt.expected) {
+				t.Errorf("GrepGroup(%q, %q, %q) = %v; want %v",
+					tt.s, tt.pattern, tt.group, got, tt.expected)
+			}
+		})
+	}
+}
