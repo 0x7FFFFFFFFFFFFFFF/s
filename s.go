@@ -212,7 +212,8 @@ func Succ(s string) string {
 //   - right: The string to insert to the right of each match.
 //
 // Returns:
-//   A new string with all occurrences of the pattern surrounded by the left and right markers. If the pattern is not found or if there is an error compiling the pattern, the original string is returned.
+//
+//	A new string with all occurrences of the pattern surrounded by the left and right markers. If the pattern is not found or if there is an error compiling the pattern, the original string is returned.
 func Highlight(s string, pattern string, left string, right string) string {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
@@ -495,6 +496,7 @@ func Dedupe(s string) string {
 
 	return string(result)
 }
+
 func ToWindowsPathSeparator(path string) string {
 	// Handle empty path
 	if path == "" {
@@ -518,6 +520,15 @@ func ToWindowsPathSeparator(path string) string {
 	return path
 }
 
+// ToLinuxPathSeparator converts a given file path to use Linux-style forward slashes as separators.
+// It handles empty paths by returning them unchanged. Additionally, it replaces all contiguous
+// separators (both backslashes and forward slashes) with a single forward slash.
+//
+// Parameters:
+//   - path: The file path to be converted.
+//
+// Returns:
+//   - A string representing the converted file path with Linux-style separators.
 func ToLinuxPathSeparator(path string) string {
 	// Handle empty path
 	if path == "" {
