@@ -332,6 +332,16 @@ func sumLength(strings []string) int {
 	return total
 }
 
+// IsMatch checks if the given string `s` matches the provided regular expression `regex`.
+// The function modifies the regex to allow partial matches if it doesn't start with `^` or end with `$`.
+// It returns true if the string matches the modified regex, otherwise false.
+//
+// Parameters:
+//   - s: The string to be matched against the regex.
+//   - regex: The regular expression pattern to match.
+//
+// Returns:
+//   - bool: True if the string matches the regex, false otherwise.
 func IsMatch(s string, regex string) bool {
 	// If regex doesn't start with ^, allow partial matches from start
 	if !strings.HasPrefix(regex, "^") {
