@@ -263,12 +263,20 @@ func Indent(s string, indent string) string {
 	return strings.Join(lines, lineEnding)
 }
 
-func Len(s string) int {
+func LenRune(s string) int {
 	return len([]rune(s))
 }
 
-func Length(s string) int {
-	return Len(s)
+func LengthRune(s string) int {
+	return LenRune(s)
+}
+
+func LengthByte(s string) int {
+	return len(s)
+}
+
+func LenByte(s string) int {
+	return len(s)
 }
 
 func EachChar(s string, callback func(char string, index int)) {

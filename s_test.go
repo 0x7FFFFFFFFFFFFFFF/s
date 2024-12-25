@@ -374,9 +374,9 @@ func TestLen(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := Len(test.input)
+		result := LenRune(test.input)
 		if result != test.expected {
-			t.Errorf("Len(%q) = %d; want %d",
+			t.Errorf("LenRune(%q) = %d; want %d",
 				test.input, result, test.expected)
 		}
 	}
