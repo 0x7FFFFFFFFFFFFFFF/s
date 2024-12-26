@@ -571,6 +571,16 @@ func Pad(s string, padStr string, length int) string {
 	return RightPad(left, padStr, left_len+s_len+right_len)
 }
 
+// ExpandLeadingTabs replaces leading tabs in each line of the input string with spaces.
+// The number of spaces used to replace each tab is specified by the tabWidth parameter.
+//
+// Parameters:
+//   - s: The input string containing lines with leading tabs.
+//   - tabWidth: The number of spaces to replace each leading tab with.
+//
+// Returns:
+//
+//	A new string with leading tabs replaced by the specified number of spaces.
 func ExpandLeadingTabs(s string, tabWidth int) string {
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
