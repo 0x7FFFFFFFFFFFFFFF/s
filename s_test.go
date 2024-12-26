@@ -1,6 +1,7 @@
 package s
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -1168,6 +1169,60 @@ func TestGrepGroup(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.expected) {
 				t.Errorf("GrepGroup(%q, %q, %q) = %v; want %v",
 					tt.s, tt.pattern, tt.group, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestExpandLeadingTabs(t *testing.T) {
+	tests := []struct {
+		input    string
+		tabWidth int
+		want     string
+	}{
+		{
+			"no tabs",
+			4,
+			"no tabs",
+		},
+		{
+			"\toneTab",
+			4,
+			"    oneTab",
+		},
+		{
+			"\t\ttwoTabs",
+			4,
+			"        twoTabs",
+		},
+		{
+			"no tabs\n\toneTab\n\t\ttwoTabs",
+			4,
+			"no tabs\n    oneTab\n        twoTabs",
+		},
+		{
+			"\tmiddle\ttab",
+			4,
+			"    middle\ttab", // Only leading tabs are expanded
+		},
+		{
+			"",
+			4,
+			"",
+		},
+		{
+			"\t\t",
+			2,
+			"    ",
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test-%d", i), func(t *testing.T) {
+			got := ExpandLeadingTabs(tt.input, tt.tabWidth)
+			if got != tt.want {
+				t.Errorf("ExpandLeadingTabs(%q, %d) = %q; want %q",
+					tt.input, tt.tabWidth, got, tt.want)
 			}
 		})
 	}

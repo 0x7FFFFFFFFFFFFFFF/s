@@ -571,6 +571,25 @@ func Pad(s string, padStr string, length int) string {
 	return RightPad(left, padStr, left_len+s_len+right_len)
 }
 
+func ExpandLeadingTabs(s string, tabWidth int) string {
+	lines := strings.Split(s, "\n")
+	for i, line := range lines {
+		// Count leading tabs
+		tabCount := 0
+		for _, c := range line {
+			if c != '\t' {
+				break
+			}
+			tabCount++
+		}
+		if tabCount > 0 {
+			// Replace leading tabs with spaces
+			lines[i] = strings.Repeat(" ", tabCount*tabWidth) + line[tabCount:]
+		}
+	}
+	return strings.Join(lines, "\n")
+}
+
 func Dedupe(s string) string {
 	if len(s) <= 1 {
 		return s
