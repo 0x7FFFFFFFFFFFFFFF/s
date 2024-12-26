@@ -310,7 +310,16 @@ func Append(s string, suffixes ...string) string {
 	return builder.String()
 }
 
-// Prepend adds multiple strings to the start of s
+// Prepend concatenates the given prefixes in reverse order and prepends them to the input string s.
+// It returns the resulting string.
+//
+// Parameters:
+//   - s: The original string to which the prefixes will be prepended.
+//   - prefixes: A variadic parameter representing the prefixes to be prepended.
+//
+// Returns:
+//
+//	A new string with the prefixes prepended to the original string s.
 func Prepend(s string, prefixes ...string) string {
 	var builder strings.Builder
 	builder.Grow(len(s) + sumLength(prefixes))
