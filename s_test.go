@@ -1172,3 +1172,75 @@ func TestGrepGroup(t *testing.T) {
 		})
 	}
 }
+
+func TestStartsWith(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		prefix   string
+		expected bool
+	}{
+		{"empty string", "", "", true},
+		{"empty prefix", "hello", "", true},
+		{"matching prefix", "hello", "he", true},
+		{"non-matching prefix", "hello", "wo", false},
+		{"longer prefix", "hi", "hello", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := StartsWith(tt.s, tt.prefix)
+			if got != tt.expected {
+				t.Errorf("StartsWith(%q, %q) = %v; want %v", tt.s, tt.prefix, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestEndsWith(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		suffix   string
+		expected bool
+	}{
+		{"empty string", "", "", true},
+		{"empty suffix", "hello", "", true},
+		{"matching suffix", "hello", "lo", true},
+		{"non-matching suffix", "hello", "rld", false},
+		{"longer suffix", "hi", "hello", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := EndsWith(tt.s, tt.suffix)
+			if got != tt.expected {
+				t.Errorf("EndsWith(%q, %q) = %v; want %v", tt.s, tt.suffix, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestContains(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		substr   string
+		expected bool
+	}{
+		{"empty string", "", "", true},
+		{"empty substring", "hello", "", true},
+		{"contains substring", "hello", "ell", true},
+		{"does not contain", "hello", "world", false},
+		{"exact match", "hello", "hello", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Contains(tt.s, tt.substr)
+			if got != tt.expected {
+				t.Errorf("Contains(%q, %q) = %v; want %v", tt.s, tt.substr, got, tt.expected)
+			}
+		})
+	}
+}
