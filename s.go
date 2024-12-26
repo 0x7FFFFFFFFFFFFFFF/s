@@ -646,3 +646,15 @@ func ToLinuxPathSeparator(path string) string {
 	re := regexp.MustCompile(`[\\/]{2,}`)
 	return strings.ReplaceAll(re.ReplaceAllString(path, "/"), "\\", "/")
 }
+
+func StartsWith(s, prefix string) bool {
+	return strings.HasPrefix(s, prefix)
+}
+
+func EndsWith(s, suffix string) bool {
+	return strings.HasSuffix(s, suffix)
+}
+
+func Contains(s, substr string) bool {
+	return strings.Contains(s, substr)
+}
