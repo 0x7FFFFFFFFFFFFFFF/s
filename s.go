@@ -723,3 +723,36 @@ func GetRegexMatchedLinesAsString(s string, pattern string) string {
 	// Join the matched lines
 	return strings.Join(matchedLines, lineEnding)
 }
+
+func GetRegexUnmatchedLinesAsString(s string, pattern string) string {
+	if s == "" || pattern == "" {
+		return ""
+	}
+
+	// Detect original line ending style
+	lineEnding := GetLineEnding(s)
+
+	// Compile the regex pattern
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return ""
+	}
+
+	// Split the s preserving line endings
+	lines := strings.SplitAfter(s, "\n")
+
+	// Filter non-matching lines
+	var unmatchedLines []string
+	for _, line := range lines {
+		line = strings.TrimRight(line, "\r\n")
+		if line == "" {
+			continue
+		}
+		if !re.MatchString(line) {
+			unmatchedLines = append(unmatchedLines, line)
+		}
+	}
+
+	// Join the unmatched lines
+	return strings.Join(unmatchedLines, lineEnding)
+}

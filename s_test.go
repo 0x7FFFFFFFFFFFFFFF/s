@@ -1372,3 +1372,98 @@ func TestGetRegexMatchedLinesAsString(t *testing.T) {
 		})
 	}
 }
+
+func TestRegexLineMatching(t *testing.T) {
+	tests := []struct {
+		name          string
+		input         string
+		pattern       string
+		wantMatched   string
+		wantUnmatched string
+	}{
+		{
+			name:          "basic matching",
+			input:         "apple\nbanana\ncherry\n",
+			pattern:       "^[ab]",
+			wantMatched:   "apple\nbanana",
+			wantUnmatched: "cherry",
+		},
+		{
+			name:          "empty input",
+			input:         "",
+			pattern:       ".*",
+			wantMatched:   "",
+			wantUnmatched: "",
+		},
+		{
+			name:          "empty pattern",
+			input:         "apple\nbanana",
+			pattern:       "",
+			wantMatched:   "",
+			wantUnmatched: "",
+		},
+		{
+			name:          "invalid regex",
+			input:         "apple\nbanana",
+			pattern:       "[",
+			wantMatched:   "",
+			wantUnmatched: "",
+		},
+		{
+			name:          "all lines match",
+			input:         "test1\ntest2\ntest3",
+			pattern:       "test\\d",
+			wantMatched:   "test1\ntest2\ntest3",
+			wantUnmatched: "",
+		},
+		{
+			name:          "no lines match",
+			input:         "apple\nbanana\ncherry",
+			pattern:       "^z",
+			wantMatched:   "",
+			wantUnmatched: "apple\nbanana\ncherry",
+		},
+		{
+			name:          "no lines match",
+			input:         "apple\nbanana\ncherry\n",
+			pattern:       "^z",
+			wantMatched:   "",
+			wantUnmatched: "apple\nbanana\ncherry",
+		},
+		{
+			name:          "mixed empty lines",
+			input:         "apple\n\nbanana\n\ncherry",
+			pattern:       "^[ab]",
+			wantMatched:   "apple\nbanana",
+			wantUnmatched: "cherry",
+		},
+		{
+			name:          "windows line endings",
+			input:         "apple\r\nbanana\r\ncherry",
+			pattern:       "^[ab]",
+			wantMatched:   "apple\r\nbanana",
+			wantUnmatched: "cherry",
+		},
+		{
+			name:          "case sensitivity",
+			input:         "Apple\nbanana\nCherry",
+			pattern:       "^[abc]",
+			wantMatched:   "banana",
+			wantUnmatched: "Apple\nCherry",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotMatched := GetRegexMatchedLinesAsString(tt.input, tt.pattern)
+			if gotMatched != tt.wantMatched {
+				t.Errorf("GetRegexMatchedLinesAsString() = %q, want %q", gotMatched, tt.wantMatched)
+			}
+
+			gotUnmatched := GetRegexUnmatchedLinesAsString(tt.input, tt.pattern)
+			if gotUnmatched != tt.wantUnmatched {
+				t.Errorf("GetRegexUnmatchedLinesAsString() = %q, want %q", gotUnmatched, tt.wantUnmatched)
+			}
+		})
+	}
+}
