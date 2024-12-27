@@ -1299,3 +1299,76 @@ func TestContains(t *testing.T) {
 		})
 	}
 }
+
+func TestGetRegexMatchedLinesAsString(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		pattern string
+		want    string
+	}{
+		{
+			name:    "basic filtering",
+			input:   "apple\nbanana\ncherry\n",
+			pattern: "^[ab]",
+			want:    "apple\nbanana",
+		},
+		{
+			name:    "basic filtering",
+			input:   "apple\nbanana\ncherry",
+			pattern: "^[ab]",
+			want:    "apple\nbanana",
+		},
+		{
+			name:    "no matches",
+			input:   "apple\nbanana\ncherry\n",
+			pattern: "^z",
+			want:    "",
+		},
+		{
+			name:    "empty input",
+			input:   "",
+			pattern: ".*",
+			want:    "",
+		},
+		{
+			name:    "windows line endings",
+			input:   "apple\r\nbanana\r\ncherry\r\n",
+			pattern: "^[ab]",
+			want:    "apple\r\nbanana",
+		},
+		{
+			name:    "mixed line endings",
+			input:   "apple\nbanana\r\ncherry\n",
+			pattern: "^[ab]",
+			want:    "apple\r\nbanana",
+		},
+		{
+			name:    "invalid regex pattern",
+			input:   "apple\nbanana\ncherry\n",
+			pattern: "[",
+			want:    "",
+		},
+		{
+			name:    "no trailing newline",
+			input:   "apple\nbanana\ncherry",
+			pattern: "^[ab]",
+			want:    "apple\nbanana",
+		},
+		{
+			name:    "multiple matches in one line",
+			input:   "aaa\nbbb\naab\n",
+			pattern: "a+b",
+			want:    "aab",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetRegexMatchedLinesAsString(tt.input, tt.pattern)
+			if got != tt.want {
+				t.Errorf("GetRegexMatchedLinesAsString(%q, %q) = %q; want %q", tt.input, tt.pattern, got, tt.want)
+			}
+		})
+	}
+}

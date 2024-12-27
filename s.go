@@ -687,3 +687,39 @@ func EndsWith(s, suffix string) bool {
 func Contains(s, substr string) bool {
 	return strings.Contains(s, substr)
 }
+
+// GetRegexMatchedLinesAsString takes a multi-line string and a regex pattern,
+// keeps only the lines that match the pattern, and returns them joined
+// with their original line endings preserved.
+func GetRegexMatchedLinesAsString(s string, pattern string) string {
+	if s == "" || pattern == "" {
+		return ""
+	}
+
+	// Detect original line ending style
+	lineEnding := GetLineEnding(s)
+
+	// Compile the regex pattern
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return ""
+	}
+
+	// Split the s preserving line endings
+	lines := strings.SplitAfter(s, "\n")
+
+	// Filter matching lines
+	var matchedLines []string
+	for _, line := range lines {
+		line = strings.TrimRight(line, "\r\n")
+		if line == "" {
+			continue
+		}
+		if re.MatchString(line) {
+			matchedLines = append(matchedLines, line)
+		}
+	}
+
+	// Join the matched lines
+	return strings.Join(matchedLines, lineEnding)
+}
